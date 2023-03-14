@@ -55,4 +55,7 @@ fetch(
     });
 
     const legend = svg.append("g").attr("id", "legend")
+
+    const legendItems = legend.selectAll("rect").data(d.children).enter()
+    .append("rect").attr("class", "legend-item").attr("name", (d) => d.name)
   });
