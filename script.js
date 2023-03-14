@@ -53,4 +53,6 @@ fetch(
 
         .style("fill", colors[i]);
     });
+
+    const legend = svg.append("g").attr("id", "legend")
   });
