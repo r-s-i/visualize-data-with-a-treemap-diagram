@@ -7,6 +7,11 @@ const svg = d3
   .attr("width", width)
   .attr("height", height);
 
+const colors = [
+  "red", "orange", "yellow", "green", 
+  "blue", "indigo", "violet"
+];
+
 fetch(
   "https://cdn.freecodecamp.org/testable-projects-fcc/data/tree_map/movie-data.json"
 )
@@ -20,6 +25,8 @@ fetch(
       .attr("name", (d) => d.name)
       .attr("id", (d) => d.name.toLowerCase());
 
+      let currentCategory = "";
+      let yValue = 0;
     d.children.forEach((e, i) => {
       d3.select(`#${e.name.toLowerCase()}`)
         .selectAll("rect")
@@ -27,6 +34,21 @@ fetch(
         .enter()
         .append("rect")
         .attr("class", "tile")
-        .attr("name", (d) => d.name);
+        .attr("name", (d) => d.name)
+        .attr("width", width * 0.01)
+        .attr("height", 10)
+        .attr("x", (e, i) => {
+          if (currentCategory !== e.category) {
+            currentCategory = e.category
+            yValue += 10;
+            return 0;
+          }
+          else {
+            return i * width * 0.01
+          }
+        })
+        .attr("y", yValue)
+
+        .style("fill", colors[i]);
     });
   });
