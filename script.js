@@ -34,7 +34,9 @@ fetch(
         .enter()
         .append("rect")
         .attr("class", "tile")
-        .attr("name", (d) => d.name)
+        .attr("data-name", (d) => d.name)
+        .attr("data-category", (d) => d.category)
+        .attr("data-value", (d) => d.value)
         .attr("width", width * 0.01)
         .attr("height", 10)
         .attr("x", (e, i) => {
