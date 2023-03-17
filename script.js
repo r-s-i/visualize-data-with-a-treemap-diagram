@@ -14,16 +14,21 @@ fetch(
 )
   .then((r) => r.json())
   .then((d) => {
+    const categoriesSumOfValues = {};
     const categories = svg
       .selectAll("g")
       .data(d.children)
       .enter()
       .append("g")
       .attr("name", (d) => d.name)
-      .attr("id", (d) => d.name.toLowerCase());
+      .attr("id", (d) => {
+        categoriesSumOfValues[d.name.toLowerCase()] = 0;
+        return d.name.toLowerCase();
+      });
 
     let currentCategory = "";
     let yValue = 0;
+    let xValue = 0;
     d.children.forEach((e, i) => {
       d3.select(`#${e.name.toLowerCase()}`)
         .selectAll("rect")
@@ -33,16 +38,30 @@ fetch(
         .attr("class", "tile")
         .attr("data-name", (d) => d.name)
         .attr("data-category", (d) => d.category)
-        .attr("data-value", (d) => d.value)
-        .attr("width", width * 0.01)
+        .attr("data-value", (d) => {
+          categoriesSumOfValues[d.category.toLowerCase()] += Number(d.value); // finds the sum to each cat.
+          return d.value;
+        })
+        .attr("width", (d) => {
+          return (
+            width * (d.value / categoriesSumOfValues[d.category.toLowerCase()])
+          );
+        })
         .attr("height", 10)
         .attr("x", (e, i) => {
           if (currentCategory !== e.category) {
             currentCategory = e.category;
             yValue += 10;
+            xValue =
+              width *
+              (e.value / categoriesSumOfValues[e.category.toLowerCase()]);
             return 0;
           } else {
-            return i * width * 0.01;
+            const oldXValue = xValue;
+            xValue +=
+              width *
+              (e.value / categoriesSumOfValues[e.category.toLowerCase()]);
+            return oldXValue;
           }
         })
         .attr("y", yValue)
