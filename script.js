@@ -134,7 +134,13 @@ fetch(
           .enter()
           .append("rect")
           // Code to pass tests, start:
-          .attr("class", "tile")
+          .attr("class", (d, i) => {
+            if (d.data.category) {
+              return "tile";
+            } else {
+              return "parent";
+            }
+          })
           .attr("data-name", (d, i) => {
             return d.data.name;
           })
