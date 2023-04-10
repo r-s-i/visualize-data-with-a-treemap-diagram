@@ -133,6 +133,7 @@ fetch(
           .data(cells)
           .enter()
           .append("rect")
+          .attr("class", "tile")
           .attr("transform", `translate(${parentX}, ${parentY})`)
           .attr("x", (d) => d.x0)
           .attr("y", (d) => d.y0)
