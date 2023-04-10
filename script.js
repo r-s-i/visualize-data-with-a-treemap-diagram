@@ -1,5 +1,6 @@
-const height = 300;
-const width = 600;
+const height = 500;
+const width = 500;
+const area = height * width;
 
 const svg = d3
   .select("main")
@@ -7,86 +8,176 @@ const svg = d3
   .attr("width", width)
   .attr("height", height);
 
-const colors = ["red", "orange", "yellow", "green", "blue", "indigo", "violet"];
+const colors = [
+  "#ADD8E6",
+  "#FFC0CB",
+  "#98FB98",
+  "#FFDAB9",
+  "#E6E6FA",
+  "#F5F5DC",
+  "#D3D3D3",
+];
 
 fetch(
   "https://cdn.freecodecamp.org/testable-projects-fcc/data/tree_map/movie-data.json"
 )
   .then((r) => r.json())
   .then((d) => {
-    const categoriesSumOfValues = {};
+    let sumAllMovies = 0;
+    const categoriesSumOfValues = [0, 0, 0, 0, 0, 0, 0];
+    // Finds sum of each category and of all:
+    d.children.forEach((outerE, i) => {
+      outerE.children.forEach((innerE) => {
+        sumAllMovies += Number(innerE.value);
+        categoriesSumOfValues[i] += Number(innerE.value);
+      });
+    });
+    // Sort to be descending:
+    categoriesSumOfValues.sort((a, b) => b - a);
+    // Needs to be sorted to be put in the right parentElement:
+    d.children.sort((a, b) => {
+      const sumA = a.children.reduce((accumulator, currentValue) => {
+        return accumulator + Number(currentValue.value);
+      }, 0);
+      const sumB = b.children.reduce((accumulator, currentValue) => {
+        return accumulator + Number(currentValue.value);
+      }, 0);
+      return sumB - sumA;
+    });
+
+    /*
+      Creates an array that will be used to give
+      each rect (category) correct width, height, x, and y dimensions:
+    */
+    let dimensionsOfRects = [];
+    remainingWidth = width;
+    remainingHeight = height;
+    sumOfUsedWidth = 0;
+    sumOfUsedHeight = 0;
+    categoriesSumOfValues.forEach((element, i) => {
+      let rectArea = (element / sumAllMovies) * area;
+      if (i % 2 == 0) {
+        remainingWidth -= rectArea / remainingHeight;
+        sumOfUsedWidth += rectArea / remainingHeight;
+        dimensionsOfRects[i] = [
+          rectArea / remainingHeight,
+          remainingHeight,
+          sumOfUsedWidth,
+          sumOfUsedHeight,
+        ];
+      } else {
+        remainingHeight -= rectArea / remainingWidth;
+        sumOfUsedHeight += rectArea / remainingWidth;
+        dimensionsOfRects[i] = [
+          remainingWidth,
+          rectArea / remainingWidth,
+          sumOfUsedWidth,
+          sumOfUsedHeight,
+        ];
+      }
+    });
+
+    // Draws each rect of categories (7 in all):
     const categories = svg
       .selectAll("g")
       .data(d.children)
       .enter()
       .append("g")
-      .attr("name", (d) => d.name)
-      .attr("id", (d) => {
-        categoriesSumOfValues[d.name.toLowerCase()] = 0;
-        return d.name.toLowerCase();
+      .attr("name", (e) => e.name)
+      .attr("id", (e) => e.name)
+      .attr("value", (_, i) => categoriesSumOfValues[i])
+      .attr("x", (e, i) => {
+        if (i === 0) {
+          return 0;
+        } else {
+          return dimensionsOfRects[i - 1][2];
+        }
+      })
+      .attr("y", (e, i) => {
+        if (i === 0) {
+          return 0;
+        } else {
+          return dimensionsOfRects[i - 1][3];
+        }
+      })
+      .attr("width", (e, i) => {
+        return dimensionsOfRects[i][0];
+      })
+      .attr("height", (e, i) => {
+        return dimensionsOfRects[i][1];
+      })
+      // Draws rect inside of categories (100 in all).
+      .each(function (funcE, funcI) {
+        // Setup for current category (cc):
+        const parentElement = d3.select(this);
+        const parentWidth = parentElement._groups[0][0].attributes.width.value;
+        const parentHeight =
+          parentElement._groups[0][0].attributes.height.value;
+        const parentX = parentElement._groups[0][0].attributes.x.value;
+        const parentY = parentElement._groups[0][0].attributes.y.value;
+
+        // Set up the layout spesific for cc:
+        const treemapLayout = d3.treemap().size([parentWidth, parentHeight]);
+
+        // Create the treemap for cc:
+        const cells = treemapLayout(
+          d3
+            .hierarchy(funcE)
+            .sum((d) => d.value)
+            .sort((a, b) => b.value - a.value)
+        ).descendants();
+
+        // Create rects (movies) for cc:
+        parentElement
+          .selectAll("rect")
+          .data(cells)
+          .enter()
+          .append("rect")
+          .attr("transform", `translate(${parentX}, ${parentY})`)
+          .attr("x", (d) => d.x0)
+          .attr("y", (d) => d.y0)
+          .attr("width", (d) => {
+            const rectWidth = d.x1 - d.x0;
+            return rectWidth;
+          })
+          .attr("height", (d) => {
+            const rectHeight = d.y1 - d.y0;
+            return rectHeight;
+          })
+          .attr("fill", () => {
+            return colors[funcI];
+          });
+
+        // Create a new text element, and align it with its rect:
+        namesArr = [];
+        parentElement
+          .selectAll("foreignObject")
+          .data(cells)
+          .enter()
+          .append("foreignObject")
+          .attr("x", (d) => {
+            return d.x0;
+          })
+          .attr("y", (d) => {
+            return d.y0;
+          })
+          .attr("width", (d) => d.x1 - d.x0)
+          .attr("height", (d) => d.y1 - d.y0)
+          .html((d, i) => {
+            if (i === 0) {
+            } else {
+              namesArr.push(d.data.name);
+              return `
+              <div id="movie-text-outer">
+                <div id="movie-text">
+                  ${d.data.name}
+                </div>
+              </div>
+              `;
+            }
+          })
+          .attr("font-size", 6)
+          .attr("transform", `translate(${parentX}, ${parentY})`)
+          .attr("color", "black");
       });
-
-    let currentCategory = "";
-    let yValue = 0;
-    let xValue = 0;
-    d.children.forEach((e, i) => {
-      d3.select(`#${e.name.toLowerCase()}`)
-        .selectAll("rect")
-        .data(e.children)
-        .enter()
-        .append("rect")
-        .attr("class", "tile")
-        .attr("data-name", (d) => d.name)
-        .attr("data-category", (d) => d.category)
-        .attr("data-value", (d) => {
-          categoriesSumOfValues[d.category.toLowerCase()] += Number(d.value); // finds the sum to each cat.
-          return d.value;
-        })
-        .attr("width", (d) => {
-          return (
-            width * (d.value / categoriesSumOfValues[d.category.toLowerCase()])
-          );
-        })
-        .attr("height", 10)
-        .attr("x", (e, i) => {
-          if (currentCategory !== e.category) {
-            currentCategory = e.category;
-            yValue += 10;
-            xValue =
-              width *
-              (e.value / categoriesSumOfValues[e.category.toLowerCase()]);
-            return 0;
-          } else {
-            const oldXValue = xValue;
-            xValue +=
-              width *
-              (e.value / categoriesSumOfValues[e.category.toLowerCase()]);
-            return oldXValue;
-          }
-        })
-        .attr("y", yValue)
-        .style("fill", colors[i])
-        .on("mouseover", (e, d) => {
-          const tooltip = svg
-            .append("foreignObject")
-            .html(`${d.name}\n${d.category}\n$${d.value}`)
-            .attr("id", "tooltip")
-            .attr("data-value", d.value);
-        })
-        .on("mouseout", (e, d) => {
-          const tooltip = d3.select("#tooltip");
-          tooltip.remove();
-        });
-    });
-
-    const legend = svg.append("g").attr("id", "legend");
-
-    const legendItems = legend
-      .selectAll("rect")
-      .data(d.children)
-      .enter()
-      .append("rect")
-      .attr("class", "legend-item")
-      .attr("name", (d) => d.name)
-      .style("fill", (_, i) => colors[i]);
   });
