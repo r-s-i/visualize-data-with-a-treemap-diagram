@@ -206,4 +206,12 @@ fetch(
           .attr("transform", `translate(${parentX}, ${parentY})`)
           .attr("color", "black");
       });
+
+    // Adding Legend
+    const legend = d3
+      .select("main")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height / 3)
+      .attr("id", "legend");
   });
