@@ -133,7 +133,26 @@ fetch(
           .data(cells)
           .enter()
           .append("rect")
+          // Code to pass tests, start:
           .attr("class", "tile")
+          .attr("data-name", (d, i) => {
+            return d.data.name;
+          })
+          .attr("data-category", (d, i) => {
+            if (d.data.category) {
+              return d.data.category;
+            } else {
+              return "parent";
+            }
+          })
+          .attr("data-value", (d, i) => {
+            if (d.data.value) {
+              return d.data.value;
+            } else {
+              return "parent";
+            }
+          })
+          // Code to pass tests, stop:
           .attr("transform", `translate(${parentX}, ${parentY})`)
           .attr("x", (d) => d.x0)
           .attr("y", (d) => d.y0)
