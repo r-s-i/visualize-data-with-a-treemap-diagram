@@ -172,6 +172,31 @@ fetch(
           })
           .attr("fill", () => {
             return colors[funcI];
+          })
+          .on("mouseover", (e, d) => {
+            const tooltip = svg
+              .append("foreignObject")
+              .html(
+                `<aside id="info">
+                  <div>${d.data.name}</div>
+                  <div>${d.data.category}</div>
+                  <div>$${d.data.value}</div>
+                </aside>
+                `
+              )
+              .attr("id", "tooltip")
+              .attr("data-value", d.value)
+              .attr("y", () => {
+                const yCord = Number(d.y0) + Number(parentY);
+                if (yCord > height * 0.5) {
+                  return 0;
+                }
+                return "70%";
+              });
+          })
+          .on("mouseout", (e, d) => {
+            const tooltip = d3.select("#tooltip");
+            tooltip.remove();
           });
 
         // Create a new text element, and align it with its rect:
@@ -204,7 +229,8 @@ fetch(
           })
           .attr("font-size", 6)
           .attr("transform", `translate(${parentX}, ${parentY})`)
-          .attr("color", "black");
+          .attr("color", "black")
+          .attr("pointer-events", "none"); // so movie rects events handlers will work
       });
 
     // Adding Legend with g elements:

@@ -13,9 +13,26 @@
 #fcc_test_suite_wrapper {
   color-scheme: light;
 }
+
 #tooltip {
   position: absolute;
   height: 30%;
   width: 30%;
-  transform: translate(35%, 70%);
+  transform: translate(35%, 0%);
+  background-color: black !important;
+}
+#info {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+#info > :first-child {
+  flex-basis: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
