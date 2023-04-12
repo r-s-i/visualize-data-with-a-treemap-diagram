@@ -191,7 +191,7 @@ fetch(
                 if (yCord > height * 0.5) {
                   return 0;
                 }
-                return "70%";
+                return "80%";
               });
           })
           .on("mouseout", (e, d) => {
