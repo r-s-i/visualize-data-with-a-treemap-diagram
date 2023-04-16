@@ -285,3 +285,7 @@ function addingLegend(data, width, height) {
     })
     .style("fill", "white");
 }
+function removingLegend(id) {
+  const legendToBeRemoved = d3.select(id);
+  legendToBeRemoved.remove();
+}
