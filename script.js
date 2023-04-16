@@ -245,39 +245,43 @@ fetch(
           .attr("touch-action", "none"); // so handles will work on touch devices
       });
 
-    // Adding Legend with g elements:
-    const legend = d3
-      .select("body")
-      .append("svg")
-      .attr("id", "legend")
-      .attr("width", width)
-      .attr("height", height / 2)
-      .selectAll("g")
-      .data(d.children)
-      .enter()
-      .append("g")
-      .attr("transform", (d, i) => {
-        return `translate(0, ${30 * i + 20})`;
-      });
-
-    // Adding rects inside of g elements:
-    legend
-      .append("rect")
-      .attr("width", 20)
-      .attr("height", 20)
-      .attr("class", "legend-item")
-      .style("fill", (d, i) => {
-        return colors[i];
-      });
-
-    // Adding text inside of g elements:
-    legend
-      .append("text")
-      .attr("x", 24)
-      .attr("y", 14)
-      .attr("font-size", 12)
-      .text((d, i) => {
-        return d.name;
-      })
-      .style("fill", "white");
+    addingLegend(d.children, width, height);
   });
+
+function addingLegend(data, width, height) {
+  // Adding Legend with g elements:
+  const legend = d3
+    .select("body")
+    .append("svg")
+    .attr("id", "legend")
+    .attr("width", width)
+    .attr("height", height / 2)
+    .selectAll("g")
+    .data(data)
+    .enter()
+    .append("g")
+    .attr("transform", (d, i) => {
+      return `translate(0, ${30 * i + 20})`;
+    });
+
+  // Adding rects inside of g elements:
+  legend
+    .append("rect")
+    .attr("width", 20)
+    .attr("height", 20)
+    .attr("class", "legend-item")
+    .style("fill", (d, i) => {
+      return colors[i];
+    });
+
+  // Adding text inside of g elements:
+  legend
+    .append("text")
+    .attr("x", 24)
+    .attr("y", 14)
+    .attr("font-size", 12)
+    .text((d, i) => {
+      return d.name;
+    })
+    .style("fill", "white");
+}
