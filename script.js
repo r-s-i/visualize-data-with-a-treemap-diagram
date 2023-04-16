@@ -241,7 +241,8 @@ fetch(
           })
           .attr("transform", `translate(${parentX}, ${parentY})`)
           .attr("color", "black")
-          .attr("pointer-events", "none"); // so movie rects events handlers will work
+          .attr("pointer-events", "none") // so movie rects events handlers will work
+          .attr("touch-action", "none"); // so handles will work on touch devices
       });
 
     // Adding Legend with g elements:
