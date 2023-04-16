@@ -1,5 +1,9 @@
-const height = 500;
-const width = 500;
+const body = d3.select("body");
+
+const clientHeight = window.innerHeight;
+const clientWidth = window.innerWidth;
+const height = clientHeight * 0.8;
+const width = clientWidth * 0.8;
 const area = height * width;
 
 const svg = d3
@@ -227,7 +231,14 @@ fetch(
               `;
             }
           })
-          .attr("font-size", 6)
+          .attr("font-size", () => {
+            console.log(clientHeight);
+            if (clientHeight * 2 < clientWidth) {
+              return "0.55vw";
+            } else {
+              return "0.55vh";
+            }
+          })
           .attr("transform", `translate(${parentX}, ${parentY})`)
           .attr("color", "black")
           .attr("pointer-events", "none"); // so movie rects events handlers will work
