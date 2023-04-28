@@ -6,12 +6,6 @@ const height = clientHeight * 0.8;
 const width = clientWidth * 0.8;
 const area = height * width;
 
-const svg = d3
-  .select("main")
-  .append("svg")
-  .attr("width", width)
-  .attr("height", height);
-
 const colors = [
   "#ADD8E6",
   "#FFC0CB",
@@ -97,6 +91,12 @@ function preWorkToDrawOuterMap(width, height, data) {
 }
 
 function drawMap(data, categoriesSumOfValues, dimensionsOfRects) {
+  const svg = d3
+    .select("main")
+    .append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .attr("id", "mainSvg");
   // Draws each rect of categories (7 in all):
   const categories = svg
     .selectAll("g")
@@ -258,6 +258,10 @@ function drawMap(data, categoriesSumOfValues, dimensionsOfRects) {
         .attr("pointer-events", "none") // so movie rects events handlers will work
         .attr("touch-action", "none"); // so handles will work on touch devices
     });
+}
+function removeMap(id) {
+  const svgToBeRemoved = d3.select(id);
+  svgToBeRemoved.remove();
 }
 
 function addingLegend(data, width, height) {
