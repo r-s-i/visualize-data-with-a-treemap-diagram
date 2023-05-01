@@ -1,10 +1,10 @@
 const body = d3.select("body");
 
-const clientHeight = window.innerHeight;
-const clientWidth = window.innerWidth;
-const height = clientHeight * 0.8;
-const width = clientWidth * 0.8;
-const area = height * width;
+let clientHeight = window.innerHeight;
+let clientWidth = window.innerWidth;
+let height = clientHeight * 0.8;
+let width = clientWidth * 0.8;
+let globalData = null;
 
 const colors = [
   "#ADD8E6",
@@ -21,16 +21,27 @@ fetch(
 )
   .then((r) => r.json())
   .then((d) => {
-    let dimensionsOfRects = preWorkToDrawOuterMap(width, height, d.children)[0];
+    globalData = d;
+    let dimensionsOfRects = preWorkToDrawOuterMap(
+      width,
+      height,
+      globalData.children
+    )[0];
     let categoriesSumOfValues = preWorkToDrawOuterMap(
       width,
       height,
-      d.children
+      globalData.children
     )[1];
 
-    drawMap(d.children, categoriesSumOfValues, dimensionsOfRects);
+    drawMap(
+      width,
+      height,
+      globalData.children,
+      categoriesSumOfValues,
+      dimensionsOfRects
+    );
 
-    addingLegend(d.children, width, height);
+    addingLegend(globalData.children, width, height);
   });
 
 function preWorkToDrawOuterMap(width, height, data) {
@@ -66,7 +77,7 @@ function preWorkToDrawOuterMap(width, height, data) {
   sumOfUsedWidth = 0;
   sumOfUsedHeight = 0;
   categoriesSumOfValues.forEach((element, i) => {
-    let rectArea = (element / sumAllMovies) * area;
+    let rectArea = (element / sumAllMovies) * height * width;
     if (i % 2 == 0) {
       remainingWidth -= rectArea / remainingHeight;
       sumOfUsedWidth += rectArea / remainingHeight;
@@ -90,13 +101,20 @@ function preWorkToDrawOuterMap(width, height, data) {
   return [dimensionsOfRects, categoriesSumOfValues];
 }
 
-function drawMap(data, categoriesSumOfValues, dimensionsOfRects) {
+function drawMap(
+  width,
+  height,
+  data,
+  categoriesSumOfValues,
+  dimensionsOfRects
+) {
   const svg = d3
     .select("main")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
     .attr("id", "mainSvg");
+
   // Draws each rect of categories (7 in all):
   const categories = svg
     .selectAll("g")
@@ -305,3 +323,35 @@ function removingLegend(id) {
   const legendToBeRemoved = d3.select(id);
   legendToBeRemoved.remove();
 }
+
+function resize() {
+  clientHeight = window.innerHeight;
+  clientWidth = window.innerWidth;
+  height = clientHeight * 0.8;
+  width = clientWidth * 0.8;
+
+  let dimensionsOfRects = preWorkToDrawOuterMap(
+    width,
+    height,
+    globalData.children
+  )[0];
+  let categoriesSumOfValues = preWorkToDrawOuterMap(
+    width,
+    height,
+    globalData.children
+  )[1];
+
+  removeMap("#mainSvg");
+  removingLegend("#legend");
+
+  drawMap(
+    width,
+    height,
+    globalData.children,
+    categoriesSumOfValues,
+    dimensionsOfRects
+  );
+  addingLegend(globalData.children, width, height);
+}
+
+d3.select(window).on("resize", resize);
