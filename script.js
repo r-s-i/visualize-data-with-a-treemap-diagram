@@ -285,7 +285,7 @@ function removeMap(id) {
 function addingLegend(data, width, height) {
   // Adding Legend with g elements:
   const legend = d3
-    .select("body")
+    .select("aside")
     .append("svg")
     .attr("id", "legend")
     .attr("width", width)
@@ -355,3 +355,42 @@ function resize() {
 }
 
 d3.select(window).on("resize", resize);
+
+// Non-d3 related js:
+const $ = (id) => document.getElementById(id);
+
+// For header:
+const title = $("title");
+const description = $("description");
+const arrow = $("arrow");
+
+title.addEventListener("mouseup", () => {
+  const isArrowDown = arrow.textContent.includes("↓");
+
+  if (isArrowDown) {
+    arrow.textContent = "↑";
+  } else {
+    arrow.textContent = "↓";
+  }
+
+  description.classList.toggle("block");
+});
+
+// For footer:
+const test = $("tests");
+const fccTest = $("fcc_test_suite_wrapper");
+
+const infoButton = $("info-b");
+const infoAside = $("info-a");
+infoButton.addEventListener("mouseup", (i) => {
+  infoAside.classList.toggle("visible");
+});
+
+fccTest.style.visibility = "hidden";
+test.addEventListener("mouseup", (i) => {
+  if (fccTest.style.visibility === "hidden") {
+    fccTest.style.visibility = "visible";
+  } else {
+    fccTest.style.visibility = "hidden";
+  }
+});
