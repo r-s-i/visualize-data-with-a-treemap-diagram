@@ -295,7 +295,13 @@ function addingLegend(data, width, height) {
     .enter()
     .append("g")
     .attr("transform", (d, i) => {
-      return `translate(0, ${30 * i + 20})`;
+      if (i === 6) {
+        return `translate(200, ${0 + 20})`;
+      } else if (i > 2) {
+        return `translate(100, ${30 * (i - 3) + 20})`;
+      } else {
+        return `translate(0, ${30 * i + 20})`;
+      }
     });
 
   // Adding rects inside of g elements:
