@@ -265,7 +265,7 @@ function drawMap(
           }
         })
         .attr("font-size", () => {
-          if (clientHeight * 2 < clientWidth) {
+          if (height < width) {
             return "0.55vw";
           } else {
             return "0.55vh";
