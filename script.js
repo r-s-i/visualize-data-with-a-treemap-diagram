@@ -199,7 +199,7 @@ function drawMap(
             return "parent";
           }
         })
-        // Code to pass tests, stop:
+        // Code to pass tests ↑
         .attr("transform", `translate(${parentX}, ${parentY})`)
         .attr("x", (d) => d.x0)
         .attr("y", (d) => d.y0)
