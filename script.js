@@ -293,18 +293,18 @@ function addingLegend(data, width, height) {
     .append("svg")
     .attr("id", "legend")
     .attr("width", width)
-    .attr("height", height / 2)
+    .attr("height", 150)
     .selectAll("g")
     .data(data)
     .enter()
     .append("g")
     .attr("transform", (d, i) => {
-      if (i === 6) {
-        return `translate(200, ${0 + 20})`;
-      } else if (i > 2) {
-        return `translate(100, ${30 * (i - 3) + 20})`;
-      } else {
-        return `translate(0, ${30 * i + 20})`;
+      {
+        if (i > 3) {
+          return `translate(90, ${30 * (i - 4) + 20})`;
+        } else {
+          return `translate(0, ${30 * i + 20})`;
+        }
       }
     });
 
