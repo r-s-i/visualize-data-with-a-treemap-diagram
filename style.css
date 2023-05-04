@@ -84,6 +84,7 @@ svg {
 }
 footer {
   max-width: 1000px;
+  height: 75px;
   margin: auto;
   margin-bottom: 2rem;
   display: flex;
@@ -92,6 +93,7 @@ footer {
 }
 footer button {
   padding: 0.5rem;
+  width: 75px;
 }
 .hidden {
   visibility: hidden;
