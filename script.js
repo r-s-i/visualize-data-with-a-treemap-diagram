@@ -2,6 +2,10 @@ const body = d3.select("body");
 
 let clientHeight = window.innerHeight;
 let clientWidth = window.innerWidth;
+if (isOnMobile()) {
+  clientHeight = screen.height;
+  clientWidth = screen.width;
+}
 let height = clientHeight * 0.8;
 let width = clientWidth * 0.8;
 let globalData = null;
@@ -329,10 +333,21 @@ function removingLegend(id) {
   const legendToBeRemoved = d3.select(id);
   legendToBeRemoved.remove();
 }
+function isOnMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  );
+}
 
 function resize() {
-  clientHeight = window.innerHeight;
-  clientWidth = window.innerWidth;
+  if (isOnMobile()) {
+    clientHeight = screen.height;
+    clientWidth = screen.width;
+  } else {
+    clientHeight = window.innerHeight;
+    clientWidth = window.innerWidth;
+  }
+
   height = clientHeight * 0.8;
   width = clientWidth * 0.8;
 
