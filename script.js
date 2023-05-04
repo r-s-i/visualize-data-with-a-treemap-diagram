@@ -11,13 +11,13 @@ let width = clientWidth * 0.8;
 let globalData = null;
 
 const colors = [
-  "#ADD8E6",
-  "#FFC0CB",
-  "#98FB98",
-  "#FFDAB9",
-  "#E6E6FA",
-  "#F5F5DC",
-  "#D3D3D3",
+  "#D5D5D5",
+  "#E1F5FE",
+  "#F0F4C3",
+  "#D7CCC8",
+  "#FFCCBC",
+  "#E1BEE7",
+  "#DCEDC8",
 ];
 
 fetch(
